@@ -1,0 +1,10 @@
+  **************************************
+
+  id(arr)
+
+  dir(arr)
+
+  sizeof() --> number of bytes an object takes up
+  sizeof(PyObject *) --> * references the pointer
+
+  get comfortable using range
