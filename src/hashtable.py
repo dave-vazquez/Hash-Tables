@@ -93,7 +93,7 @@ class HashTable:
         index = self._hash_mod(key)
 
         if self.storage[index] is None:
-            self.storage[index] = value
+            self.storage[index] = (key, value)
         else:
             raise CollisionError(
                 f"Key: {key} hashed to an occupied index in the table.")
@@ -113,7 +113,7 @@ class HashTable:
         if self.storage[index] is None:
             raise KeyNotFoundError(f"Key {key} was not found in the table.")
         else:
-            value = self.storage[index]
+            value = self.storage[index][1]
             self.storage[index] = None
 
             return value
@@ -129,7 +129,10 @@ class HashTable:
         # SOLUTION:
         index = self._hash_mod(key)
 
-        return self.storage[index]
+        if self.storage[index] is None:
+            return None
+
+        return self.storage[index][1]
 
     def resize(self):
         '''
@@ -139,7 +142,18 @@ class HashTable:
         Fill this in.
         '''
 
-        pass
+        self.capacity *= 2
+
+        new_storage = [None] * self.capacity
+
+        for i in len(self.storage):
+            if self.storage[i] is not None:
+                key = self.storage[i][0]
+                value = self.storage[i][1]
+                index = self._hash_mod(key)
+                new_storage[index] = (key, value)
+
+        self.storage = new_storage
 
 
 ht = HashTable(8)
