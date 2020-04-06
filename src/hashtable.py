@@ -146,22 +146,48 @@ class HashTable:
 
         new_storage = [None] * self.capacity
 
-        for i in len(self.storage):
-            if self.storage[i] is not None:
-                key = self.storage[i][0]
-                value = self.storage[i][1]
+        for pair in self.storage:
+            if pair is not None:
+                key = pair[0]
+                value = pair[1]
                 index = self._hash_mod(key)
                 new_storage[index] = (key, value)
 
         self.storage = new_storage
 
 
-ht = HashTable(8)
+ht = HashTable(3)
 
 ht.insert("key-0", "val-0")
+print("inserted key-0, val-0")
 ht.insert("key-1", "val-1")
+print("inserted key-1, val-1")
+ht.insert("key-2", "val-2")
+print("inserted key-2, val-2")
 
-print(ht.remove("key-0"))
+print("retrieving key-0:")
+print(ht.retrieve("key-0"))
+print("")
+print("retrieving key-1:")
+print(ht.retrieve("key-1"))
+print("")
+print("retrieving key-2:")
+print(ht.retrieve("key-2"))
+print("")
+
+print("removing key-2:")
+print(ht.remove("key-2"))
+print("")
+
+print("resulting storage:")
+print(ht.storage)
+print("")
+
+print("resizing storage:")
+ht.resize()
+print(ht.storage)
+
+# print(ht.remove("key-0"))
 
 # ht.insert("key-8", "val-8")
 # ht.insert("key-9", "val-9")
