@@ -19,6 +19,20 @@ class CollisionError(Error):
             return f"ColissionError, {self.message}"
         else:
             return "CollisionError has been raised"
+
+
+class KeyNotFoundError(Error):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            return f"KeyNotFoundError, {self.message}"
+        else:
+            return "KeyNotFoundError has been raised"
 # '''
 # Linked List hash table key/value pair
 # '''
@@ -76,10 +90,6 @@ class HashTable:
         Fill this in.
         '''
         # SOLUTION:
-        # _hash with modulus operation
-        # index = self._hash(key) % self.capacity
-
-        # _hash_mod without modulus operation
         index = self._hash_mod(key)
 
         if self.storage[index] is None:
@@ -96,7 +106,17 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+
+        # SOLUTION:
+        index = self._hash_mod(key)
+
+        if self.storage[index] is None:
+            raise KeyNotFoundError(f"Key {key} was not found in the table.")
+        else:
+            value = self.storage[index]
+            self.storage[index] = None
+
+            return value
 
     def retrieve(self, key):
         '''
@@ -123,12 +143,9 @@ ht = HashTable(8)
 
 ht.insert("key-0", "val-0")
 ht.insert("key-1", "val-1")
-ht.insert("key-2", "val-2")
-ht.insert("key-3", "val-3")
-ht.insert("key-4", "val-4")
-ht.insert("key-5", "val-5")
-ht.insert("key-6", "val-6")
-ht.insert("key-7", "val-7")
+
+print(ht.remove("key-0"))
+
 # ht.insert("key-8", "val-8")
 # ht.insert("key-9", "val-9")
 
