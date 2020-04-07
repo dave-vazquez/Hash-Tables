@@ -80,32 +80,35 @@ class HashTable:
         return self._hash(key) % self.capacity
 
     def insert(self, key, value):
-        '''
-        Store the value with the given key.
 
-        # Part 1: Hash collisions should be handled with an error warning. (Think about and
-        # investigate the impact this will have on the tests)
-
-        # Part 2: Change this so that hash collisions are handled with Linked List Chaining.
-
-        Fill this in.
-        '''
-        # SOLUTION:
         index = self._hash_mod(key)
 
+        # if there's nothing stored at the hashed index
         if self.storage[index] is None:
+            # start a new linked list with the key value pair
             self.storage[index] = LinkedPair(key, value)
 
-        else:
-            inserted = False
-            current = self.storage[index]
+        # else if the head of the linked list matches the key
+        elif self.storage[index].key = key:
+            # overwrite the value
+            self.storage[index].value = value
 
+        # else begin the traversal
+        else:
+            # make 'current' the head's 'next' of the linked list
+            inserted = False
+            current = self.storage[index].next
+
+            # traverse
             while current.next is not None and inserted is False:
+                # and overwrite the value if the key exists
                 if current.key == key:
                     current.value = value
                     inserted = True
 
+            # if no insertion took place and we're at the end of the linked list
             if not inserted:
+                # make current.next the new entry
                 current.next = LinkedPair(key, value)
 
     def remove(self, key):
