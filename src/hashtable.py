@@ -52,6 +52,7 @@ class HashTable:
     '''
 
     def __init__(self, capacity):
+        self.entries = 0
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
 
@@ -93,10 +94,19 @@ class HashTable:
         index = self._hash_mod(key)
 
         if self.storage[index] is None:
-            self.storage[index] = (key, value)
+            self.storage[index] = LinkedPair(key, value)
+
         else:
-            raise CollisionError(
-                f"Key: {key} hashed to an occupied index in the table.")
+            inserted = False
+            current = self.storage[index]
+
+            while current.next is not None and inserted is False:
+                if current.key == key:
+                    current.value = value
+                    inserted = True
+
+            if not inserted:
+                current.next = LinkedPair(key, value)
 
     def remove(self, key):
         '''
@@ -165,27 +175,27 @@ print("inserted key-1, val-1")
 ht.insert("key-2", "val-2")
 print("inserted key-2, val-2")
 
-print("retrieving key-0:")
-print(ht.retrieve("key-0"))
-print("")
-print("retrieving key-1:")
-print(ht.retrieve("key-1"))
-print("")
-print("retrieving key-2:")
-print(ht.retrieve("key-2"))
-print("")
+# print("retrieving key-0:")
+# print(ht.retrieve("key-0"))
+# print("")
+# print("retrieving key-1:")
+# print(ht.retrieve("key-1"))
+# print("")
+# print("retrieving key-2:")
+# print(ht.retrieve("key-2"))
+# print("")
 
-print("removing key-2:")
-print(ht.remove("key-2"))
-print("")
+# print("removing key-2:")
+# print(ht.remove("key-2"))
+# print("")
 
-print("resulting storage:")
-print(ht.storage)
-print("")
+# print("resulting storage:")
+# print(ht.storage)
+# print("")
 
-print("resizing storage:")
-ht.resize()
-print(ht.storage)
+# print("resizing storage:")
+# ht.resize()
+# print(ht.storage)
 
 # print(ht.remove("key-0"))
 
