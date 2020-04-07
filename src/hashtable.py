@@ -87,6 +87,7 @@ class HashTable:
         if self.storage[index] is None:
             # start a new linked list with the key value pair
             self.storage[index] = LinkedPair(key, value)
+            self.entries += 1
 
         # else if the head of the linked list matches the key
         elif self.storage[index].key = key:
@@ -110,6 +111,7 @@ class HashTable:
             if not inserted:
                 # make current.next the new entry
                 current.next = LinkedPair(key, value)
+                self.entries += 1
 
     def remove(self, key):
         '''
