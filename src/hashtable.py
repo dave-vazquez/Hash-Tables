@@ -3,53 +3,17 @@ import os
 os.system('clear')
 
 
-class Error(Exception):
-    pass
-
-
-class CollisionError(Error):
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
-
-    def __str__(self):
-        if self.message:
-            return f"ColissionError, {self.message}"
-        else:
-            return "CollisionError has been raised"
-
-
-class KeyNotFoundError(Error):
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
-
-    def __str__(self):
-        if self.message:
-            return f"KeyNotFoundError, {self.message}"
-        else:
-            return "KeyNotFoundError has been raised"
-# '''
-# Linked List hash table key/value pair
-# '''
-
-
 class LinkedPair:
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next = None
 
+    def __str__(self):
+        return f"{{ key: {self.key}, value: {self.value} }}"
+
 
 class HashTable:
-    '''
-    A hash table that with `capacity` buckets
-    that accepts string keys
-    '''
 
     def __init__(self, capacity):
         self.entries = 0
@@ -57,97 +21,85 @@ class HashTable:
         self.storage = [None] * capacity
 
     def _hash(self, key):
-        '''
-        Hash an arbitrary key and return an integer.
 
-        You may replace the Python hash with DJB2 as a stretch goal.
-        '''
         return hash(key)
 
     def _hash_djb2(self, key):
-        '''
-        Hash an arbitrary key using DJB2 hash
-
-        OPTIONAL STRETCH: Research and implement DJB2
-        '''
+        # TODO
         pass
 
     def _hash_mod(self, key):
-        '''
-        Take an arbitrary key and return a valid integer index
-        within the storage capacity of the hash table.
-        '''
+
         return self._hash(key) % self.capacity
 
     def insert(self, key, value):
 
         index = self._hash_mod(key)
+        # make 'current' the "head" of the Linked List
+        current = self.storage[index]
+        # make 'prev' None as there is no previous value before the"head
+        prev = None
+        # create a flag for when the value has been inserted (or overwritten)
+        inserted = False
 
-        # if there's nothing stored at the hashed index
-        if self.storage[index] is None:
-            # start a new linked list with the key value pair
-            self.storage[index] = LinkedPair(key, value)
+        # traverse the Linked List
+        while current is not None and inserted == False:
+            # and overwrite the value if the key matches the key in the Node
+            if current.key == key:
+                current.value = value
+                # flag inserted to True to kil the while-loop
+                inserted = True
+            # else set 'prev' equal to the current node, and 'current' to the next node
+            else:
+                prev = current
+                current = current.next
+            # repeat the loop on the next Linked List node
+
+        # if no insertion took place and we're at the end of the Linked List
+        if inserted == False:
+            # current will be 'None', so initalize it to a new LinkedPair Node
+            current = LinkedPair(key, value)
+            # print(current)
             self.entries += 1
 
-        # else if the head of the linked list matches the key
-        elif self.storage[index].key = key:
-            # overwrite the value
-            self.storage[index].value = value
-
-        # else begin the traversal
-        else:
-            # make 'current' the head's 'next' of the linked list
-            inserted = False
-            current = self.storage[index].next
-
-            # traverse
-            while current.next is not None and inserted is False:
-                # and overwrite the value if the key exists
-                if current.key == key:
-                    current.value = value
-                    inserted = True
-
-            # if no insertion took place and we're at the end of the linked list
-            if not inserted:
-                # make current.next the new entry
-                current.next = LinkedPair(key, value)
-                self.entries += 1
+        # update 'prev's next pointer to the new node
+        if prev is not None:
+            prev.next = current
 
     def remove(self, key):
-        '''
-        Remove the value stored with the given key.
 
-        Print a warning if the key is not found.
-
-        Fill this in.
-        '''
-
-        # SOLUTION:
-        index = self._hash_mod(key)
-
-        if self.storage[index] is None:
-            raise KeyNotFoundError(f"Key {key} was not found in the table.")
-        else:
-            value = self.storage[index][1]
-            self.storage[index] = None
-
-            return value
-
-    def retrieve(self, key):
-        '''
-        Retrieve the value stored with the given key.
-
-        Returns None if the key is not found.
-
-        Fill this in.
-        '''
-        # SOLUTION:
         index = self._hash_mod(key)
 
         if self.storage[index] is None:
             return None
 
-        return self.storage[index][1]
+        else:
+            current = self.storage[index]
+            prev = None
+
+            while current is not None:
+                if current.key == key:
+                    value = current.value
+                    current = None
+                    prev.next = current.next
+                    self.entries -= 1
+                    return value
+                prev = current
+                current = current.next
+
+            return None
+
+    def retrieve(self, key):
+        index = self._hash_mod(key)
+        current = self.storage[index]
+
+        while current is not None:
+            if current.key == key:
+                return current.value
+            else:
+                current = current.next
+
+        return current
 
     def resize(self):
         '''
@@ -161,51 +113,30 @@ class HashTable:
 
         new_storage = [None] * self.capacity
 
-        for pair in self.storage:
-            if pair is not None:
-                key = pair[0]
-                value = pair[1]
+        for linked_pair in self.storage:
+            if linked_pair is not None:
+                key = linked_pair.key
+                value = linked_pair.value
                 index = self._hash_mod(key)
-                new_storage[index] = (key, value)
+                new_storage[index] = LinkedPair(key, value)
 
         self.storage = new_storage
 
 
-ht = HashTable(3)
+ht = HashTable(8)
 
 ht.insert("key-0", "val-0")
-print("inserted key-0, val-0")
-ht.insert("key-1", "val-1")
-print("inserted key-1, val-1")
-ht.insert("key-2", "val-2")
-print("inserted key-2, val-2")
-
-# print("retrieving key-0:")
-# print(ht.retrieve("key-0"))
-# print("")
-# print("retrieving key-1:")
-# print(ht.retrieve("key-1"))
-# print("")
-# print("retrieving key-2:")
-# print(ht.retrieve("key-2"))
-# print("")
-
-# print("removing key-2:")
-# print(ht.remove("key-2"))
-# print("")
-
-# print("resulting storage:")
-# print(ht.storage)
-# print("")
-
-# print("resizing storage:")
-# ht.resize()
-# print(ht.storage)
-
-# print(ht.remove("key-0"))
-
+# ht.insert("key-1", "val-1")
+# ht.insert("key-2", "val-2")
+# ht.insert("key-3", "val-3")
+# ht.insert("key-4", "val-4")
+# ht.insert("key-5", "val-5")
+# ht.insert("key-6", "val-6")
+# ht.insert("key-7", "val-7")
 # ht.insert("key-8", "val-8")
 # ht.insert("key-9", "val-9")
+
+print(ht.storage)
 
 
 # if __name__ == "__main__":
