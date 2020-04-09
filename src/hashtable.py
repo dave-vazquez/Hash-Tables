@@ -10,7 +10,13 @@ class LinkedPair:
         self.next = None
 
     def __str__(self):
-        return f"{{ key: {self.key}, value: {self.value} }}"
+        return_str = ""
+        current = self
+        while current is not None:
+            return_str += f"{{ key: {current.key}, value: {current.value} }} ->\n"
+            current = current.next
+
+        return return_str + "None"
 
 
 class HashTable:
@@ -34,41 +40,56 @@ class HashTable:
 
     def insert(self, key, value):
 
-        #TODO try again.
-      
+        index = self._hash_mod(key)
+
+        if self.storage[index] is None:
+            self.storage[index] = LinkedPair(key, value)
+
+        elif self.storage[index].key == key:
+            self.storage[index].value = value
+
+        else:
+            prev = self.storage[index]
+            current = self.storage[index].next
+
+            while current is not None:
+                if current.key == key:
+                    current.value = value
+                    return
+                else:
+                    prev = current
+                    current = current.next
+
+            current = LinkedPair(key, value)
+            prev.next = current
+
     def remove(self, key):
 
         index = self._hash_mod(key)
 
-        if self.storage[index] is None:
-            return None
+        if self.storage[index] is not None:
 
-        else:
-            current = self.storage[index]
-            prev = None
+            if self.storage[index].key == key:
+                self.storage[index] = self.storage[index].next
+                self.entries -= 1
 
-            while current is not None:
-                if current.key == key:
-                    value = current.value
-                    current = None
-                    prev.next = current.next
-                    self.entries -= 1
-                    return value
-                prev = current
-                current = current.next
+            else:
+                prev = self.storage[index]
+                current = self.storage[index].next
 
-            return None
+                while current is not None:
+                    if current.key == key:
+                        prev.next = current.next
+                        self.entries -= 1
+                        return
+                    prev = prev.next
+                    current = current.next
 
     def retrieve(self, key):
         index = self._hash_mod(key)
-        # store the value of the hashed index in current
+
         current = self.storage[index]
 
-        # if the value is None, this loop won't run at all
-        # and instead will skip right to the return, returning None
-        # if the value is NOT none, the loop starts until it finds the 
-        # key, returns the value, or loops all the way to the end of 
-        # the list, None, and returns None as the value
         while current is not None:
             if current.key == key:
                 return current.value
@@ -78,67 +99,52 @@ class HashTable:
         return current
 
     def resize(self):
-        '''
-        Doubles the capacity of the hash table and
-        rehash all key/value pairs.
+        old_storage = self.storage
+        self.capacity = self.capacity * 2
+        self.storage = [None] * self.capacity
 
-        Fill this in.
-        '''
-
-        self.capacity *= 2
-
-        new_storage = [None] * self.capacity
-
-        for linked_pair in self.storage:
+        for linked_pair in old_storage:
             if linked_pair is not None:
-                key = linked_pair.key
-                value = linked_pair.value
-                index = self._hash_mod(key)
-                new_storage[index] = LinkedPair(key, value)
+                current = linked_pair
+                while current is not None:
+                    key = current.key
+                    value = current.value
+                    self.insert(key, value)
+                    current = current.next
 
-        self.storage = new_storage
+    def __str__(self):
+        return_str = "[\n"
 
+        for pair in self.storage:
+            return_str += f"{pair},\n"
 
-ht = HashTable(8)
-
-ht.insert("key-0", "val-0")
-# ht.insert("key-1", "val-1")
-# ht.insert("key-2", "val-2")
-# ht.insert("key-3", "val-3")
-# ht.insert("key-4", "val-4")
-# ht.insert("key-5", "val-5")
-# ht.insert("key-6", "val-6")
-# ht.insert("key-7", "val-7")
-# ht.insert("key-8", "val-8")
-# ht.insert("key-9", "val-9")
-
-print(ht.storage)
+        return return_str + "]"
 
 
-# if __name__ == "__main__":
-#     ht = HashTable(2)
+if __name__ == "__main__":
+    ht = HashTable(2)
 
-#     ht.insert("line_1", "Tiny hash table")
-#     ht.insert("line_2", "Filled beyond capacity")
-#     ht.insert("line_3", "Linked list saves the day!")
+    ht.insert("line_1", "Tiny hash table")
+    ht.insert("line_2", "Filled beyond capacity")
+    ht.insert("line_3", "Linked list saves the day!")
 
-#     print("")
+    print("")
 
-#     # Test storing beyond capacity
-#     print(ht.retrieve("line_1"))
-#     print(ht.retrieve("line_2"))
-#     print(ht.retrieve("line_3"))
+    # Test storing beyond capacity
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"))
 
-#     # Test resizing
-#     old_capacity = len(ht.storage)
-#     ht.resize()
-#     new_capacity = len(ht.storage)
+    # Test resizing
+    old_capacity = len(ht.storage)
+    ht.resize()
+    new_capacity = len(ht.storage)
 
-#     print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-#     # Test if data intact after resizing
-#     print(ht.retrieve("line_1"))
-#     print(ht.retrieve("line_2"))
-#     print(ht.retrieve("line_3"))
+    # Test if data intact after resizing
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"))
 
-#     print("")
+    print("")
