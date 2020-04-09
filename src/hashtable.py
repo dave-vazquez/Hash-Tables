@@ -34,38 +34,8 @@ class HashTable:
 
     def insert(self, key, value):
 
-        index = self._hash_mod(key)
-        # make 'current' the "head" of the Linked List
-        current = self.storage[index]
-        # make 'prev' None as there is no previous value before the"head
-        prev = None
-        # create a flag for when the value has been inserted (or overwritten)
-        inserted = False
-
-        # traverse the Linked List
-        while current is not None and inserted == False:
-            # and overwrite the value if the key matches the key in the Node
-            if current.key == key:
-                current.value = value
-                # flag inserted to True to kil the while-loop
-                inserted = True
-            # else set 'prev' equal to the current node, and 'current' to the next node
-            else:
-                prev = current
-                current = current.next
-            # repeat the loop on the next Linked List node
-
-        # if no insertion took place and we're at the end of the Linked List
-        if inserted == False:
-            # current will be 'None', so initalize it to a new LinkedPair Node
-            current = LinkedPair(key, value)
-            # print(current)
-            self.entries += 1
-
-        # update 'prev's next pointer to the new node
-        if prev is not None:
-            prev.next = current
-
+        #TODO try again.
+      
     def remove(self, key):
 
         index = self._hash_mod(key)
@@ -91,8 +61,14 @@ class HashTable:
 
     def retrieve(self, key):
         index = self._hash_mod(key)
+        # store the value of the hashed index in current
         current = self.storage[index]
 
+        # if the value is None, this loop won't run at all
+        # and instead will skip right to the return, returning None
+        # if the value is NOT none, the loop starts until it finds the 
+        # key, returns the value, or loops all the way to the end of 
+        # the list, None, and returns None as the value
         while current is not None:
             if current.key == key:
                 return current.value
