@@ -1,6 +1,8 @@
 import unittest
-
+import os
 from hashtable import HashTable
+
+os.system('clear')
 
 
 class TestHashTable(unittest.TestCase):

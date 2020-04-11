@@ -1,94 +1,124 @@
-# '''
-# Linked List hash table key/value pair
-# '''
+import os
+
+os.system('clear')
+
+
 class LinkedPair:
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next = None
 
+    def __str__(self):
+        return_str = ""
+        current = self
+        while current is not None:
+            return_str += f"{{ key: {current.key}, value: {current.value} }} ->\n"
+            current = current.next
+
+        return return_str + "None"
+
+
 class HashTable:
-    '''
-    A hash table that with `capacity` buckets
-    that accepts string keys
-    '''
+
     def __init__(self, capacity):
+        self.entries = 0
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
 
-
     def _hash(self, key):
-        '''
-        Hash an arbitrary key and return an integer.
 
-        You may replace the Python hash with DJB2 as a stretch goal.
-        '''
         return hash(key)
 
-
     def _hash_djb2(self, key):
-        '''
-        Hash an arbitrary key using DJB2 hash
-
-        OPTIONAL STRETCH: Research and implement DJB2
-        '''
+        # TODO
         pass
-
 
     def _hash_mod(self, key):
-        '''
-        Take an arbitrary key and return a valid integer index
-        within the storage capacity of the hash table.
-        '''
+
         return self._hash(key) % self.capacity
 
-
     def insert(self, key, value):
-        '''
-        Store the value with the given key.
 
-        # Part 1: Hash collisions should be handled with an error warning. (Think about and
-        # investigate the impact this will have on the tests)
+        index = self._hash_mod(key)
 
-        # Part 2: Change this so that hash collisions are handled with Linked List Chaining.
+        if self.storage[index] is None:
+            self.storage[index] = LinkedPair(key, value)
 
-        Fill this in.
-        '''
-        pass
+        elif self.storage[index].key == key:
+            self.storage[index].value = value
 
+        else:
+            prev = self.storage[index]
+            current = self.storage[index].next
 
+            while current is not None:
+                if current.key == key:
+                    current.value = value
+                    return
+                else:
+                    prev = current
+                    current = current.next
+
+            current = LinkedPair(key, value)
+            prev.next = current
 
     def remove(self, key):
-        '''
-        Remove the value stored with the given key.
 
-        Print a warning if the key is not found.
+        index = self._hash_mod(key)
 
-        Fill this in.
-        '''
-        pass
+        if self.storage[index] is not None:
 
+            if self.storage[index].key == key:
+                self.storage[index] = self.storage[index].next
+                self.entries -= 1
+
+            else:
+                prev = self.storage[index]
+                current = self.storage[index].next
+
+                while current is not None:
+                    if current.key == key:
+                        prev.next = current.next
+                        self.entries -= 1
+                        return
+                    prev = prev.next
+                    current = current.next
 
     def retrieve(self, key):
-        '''
-        Retrieve the value stored with the given key.
+        index = self._hash_mod(key)
 
-        Returns None if the key is not found.
+        current = self.storage[index]
 
-        Fill this in.
-        '''
-        pass
+        while current is not None:
+            if current.key == key:
+                return current.value
+            else:
+                current = current.next
 
+        return current
 
     def resize(self):
-        '''
-        Doubles the capacity of the hash table and
-        rehash all key/value pairs.
+        old_storage = self.storage
+        self.capacity = self.capacity * 2
+        self.storage = [None] * self.capacity
 
-        Fill this in.
-        '''
-        pass
+        for linked_pair in old_storage:
+            if linked_pair is not None:
+                current = linked_pair
+                while current is not None:
+                    key = current.key
+                    value = current.value
+                    self.insert(key, value)
+                    current = current.next
 
+    def __str__(self):
+        return_str = "[\n"
+
+        for pair in self.storage:
+            return_str += f"{pair},\n"
+
+        return return_str + "]"
 
 
 if __name__ == "__main__":

@@ -1,0 +1,92 @@
+Array:
+	- sequence of elements of the same type
+	- stored in a contiguous block of memory.
+
+Declaring an array:
+
+	1. Determine how big the array needs to be.
+	2. Request a block of memory that will fit the array.
+	3. Receive the memory address of the reserved block.
+	4. Write values into the array.
+
+
+	Ex. [2, 3, 4, 5]
+
+	1. Determine how big the array needs to be.
+		- An integer is 4-bytes,
+			- So the array needs to be 16-bytes
+			- (1 byte = 4 bits) ** 8 bits in a byte?? so 36-bytes
+			- a bit is either a 1 or a zero
+
+	2. Request a block of memory that will fit the array:
+		- Request  16-bytes of memory from the computer
+
+	3. Receive the memory address of the reserved block:
+		- Receive an address to to the start of the 16-bytes
+
+	4. Write your values into the array
+
+
+	kilobyte = 1,000 			 bytes
+	megabyte = 1,000,000 	 	 bytes
+	gigabyte = 1,000,000,000 	 bytes
+
+
+Access the index of an array:
+	
+	Ex. [2, 3, 4, 5]
+
+	index * sizeof(type) + start_address
+
+	  2   *     4 bytes        +     25600
+
+
+	- O(1) for access
+	- Array most time and space efficient data-structure
+
+What is an array?
+
+	A sequence of elements of the same type stored in a contiguous block of 	memory.
+
+	* important: the formula for finding an index relies on the array 				   storing the same data-type
+
+*********************************************************************
+
+Python Lists:
+
+	Arrays with a lot of built in functionality.
+
+
+Adding element to the end of an array?
+
+	1. Take the size of your current array and increase it by one element.
+	2. Request a block of memory of the new size.
+	3. Copy each element from the old space to the new space one at a time.
+	4. Free the memory from the old array.
+
+		- This is an O(n) operation!
+
+How does Python add an element to the end of a list?
+
+	- Python will allocate a few empty spaces each time the array grows.
+	- Each time it grows, it allocates a bit more extra space than the 	  previous
+	- Adding an element to the end of a list is usually O(1) but sometimes
+	  O(n)
+	- On average O(1) though as allocated empty spaces is infrequent.
+
+
+	Adds 4, then 8, than 32, 
+
+
+How does Python add an element to the Beginning of a list?
+
+	1. Check if there’s any empty space at the end of the array
+	2. If not:
+		1. Allocate a new array, place the first element and copy of the 
+			rest
+		2. Free memory from the old array
+	3. If so:
+		1. Starting from the back, move EACH element to the right one space
+		2. Place the new element in the first position
+
+	This is an O(n) operation no matter what!
